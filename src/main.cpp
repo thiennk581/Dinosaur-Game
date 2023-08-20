@@ -29,13 +29,17 @@ int main() {
     line.setOrigin(1200/2, 6/2);
 
     //dino
-    sf::Texture dinoTexture;
-    dinoTexture.loadFromFile("../resources/Image/dino.png");
+    int dinoStatus = 1;
+    float frameTime = 0.1f, currentTime = 0.f;
+    sf::Texture dinoTexture[3];
+    dinoTexture[0].loadFromFile("../resources/Image/dino_0.png");
+    dinoTexture[1].loadFromFile("../resources/Image/dino_1.png");
+    dinoTexture[2].loadFromFile("../resources/Image/dino_2.png");
     sf::RectangleShape dino(sf::Vector2f(66.6,94));
     dino.setFillColor(sf::Color::White);
     dino.setPosition(40, line.getPosition().y - 50);
     dino.setOrigin(66.6/2, 94/2);
-    dino.setTexture(&dinoTexture);
+    dino.setTexture(&dinoTexture[dinoStatus],true);
 
     // cactus
     float cactusSpeed = 450.f;
@@ -169,22 +173,46 @@ int main() {
                     if (score > highestScore) highestScore = int(score);
                     score = 1.f;
                     cactusSpeed = 380.f;
+                    dinoStatus = 1;
                 }
             }
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             {
                 isLose = false;
-                    lives = 3;
-                    cactus.setPosition(1300, cactusY[type]);
-                    if (score > highestScore) highestScore = int(score);
-                    score = 1.f;
-                    cactusSpeed = 380.f;
+                lives = 3;
+                cactus.setPosition(1300, cactusY[type]);
+                if (score > highestScore) highestScore = int(score);
+                score = 1.f;
+                cactusSpeed = 380.f;
+                dinoStatus = 1;
             }
+        }
+
+        // dino animation
+        currentTime += timeInLoop;
+        if (currentTime >= frameTime)
+        {
+            if (dino.getPosition().y != line.getPosition().y - 50 || isLose == true) {
+                dinoStatus = 0;
+                dino.setTexture(&dinoTexture[dinoStatus], true);
+            }
+            if (dinoStatus == 0 && dino.getPosition().y == line.getPosition().y - 50)
+                dinoStatus = 1;
+            if (dinoStatus == 1) {
+                dinoStatus = 2;
+                dino.setTexture(&dinoTexture[dinoStatus], true);
+            }
+            else if (dinoStatus == 2) {
+                dinoStatus = 1;
+                dino.setTexture(&dinoTexture[dinoStatus], true);
+            }
+            currentTime -= frameTime;
         }
         
         window.clear(sf::Color(32,33,36));
         window.draw(line);
         window.draw(dino);
+        dino.setTexture(&dinoTexture[dinoStatus]);
         window.draw(cactus);
         if (isLose) {
             window.draw(announcement);
