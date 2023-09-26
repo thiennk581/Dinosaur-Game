@@ -109,13 +109,13 @@ int main() {
             }
             if (spacing && dino.getPosition().y > line.getPosition().y - 270)
             {
-                dino.move(0, -0.45);
+                dino.move(0, timeInLoop * -400);
             }
             else 
                 spacing = false;
             if (spacing == false && dino.getPosition().y < line.getPosition().y - 50)
             {
-                dino.move(0, 0.2);
+                dino.move(0, timeInLoop * 380);
             }
             else if (dino.getPosition().y > line.getPosition().y - 50)
                 dino.setPosition(dino.getPosition().x, line.getPosition().y - 50);
